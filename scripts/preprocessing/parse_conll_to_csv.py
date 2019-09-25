@@ -23,9 +23,8 @@ with open(conll_file, 'r') as file:
             continue
         lines = sentence.split('\n')
         meta_info = lines[0].split('\t')
-        id = meta_info[1]
         label = meta_info[2]
-        tweet = [id, label]
+        tweet = [label]
 
         # Record label frequency in the data
         if label in label_counts:
