@@ -13,6 +13,7 @@ import re
 import pandas as pd
 import emoji
 
+
 assert len(sys.argv) > 1, "Must pass in CONLL file to convert"
 
 # interpret command line args:
@@ -65,7 +66,8 @@ with open(conll_file, 'r') as file:
             if remove_lang:
                 tweet.append(word)
             else:
-                tweet.append((word, language))
+                tweet.append((word,language))
+
         tweets.append(tweet)
 
 print(label_counts)
