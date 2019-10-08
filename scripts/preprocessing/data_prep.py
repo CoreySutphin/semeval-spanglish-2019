@@ -8,8 +8,11 @@ ISSUES:
 3. extra spaces in between words and punctuation
 """
 
+from sklearn.model_selection import train_test_split
+import numpy as np
 import pickle
 
+############################# READ DATA #########################################
 data_file = "../scripts/preprocessing/train_spanglish.csv"
 label_to_cls = {'positive': 0, 'negative': 1, 'neutral': 2}
 
@@ -27,3 +30,30 @@ with open(data_file, 'r') as csvin:
         sentences.append([label, sentence])
 
 pickle.dump(sentences, open('data.p', 'wb'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

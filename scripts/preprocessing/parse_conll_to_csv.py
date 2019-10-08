@@ -1,4 +1,7 @@
 """
+    @author Corey Sutphin,
+    @author Cove Soyars
+    @author Nick Rodriguez
     Parse a CONLL document, converting each sentence to a list of objects representing
     the tokens.
     Created for the 2019 SemEval Challenge.
@@ -74,4 +77,4 @@ print(label_counts)
 tweets_df = pd.DataFrame(tweets)
 
 
-tweets_df.to_csv('my_csv.csv', index=False, header=False)
+tweets_df.to_csv('train_spanglish.csv', index=False, header=False)

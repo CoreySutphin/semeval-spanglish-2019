@@ -17,7 +17,7 @@ from sklearn.metrics import classification_report
 VALIDATION_SPLIT = 0.4  # Reserve 40% of tweets for validation
 
 # load data from file:
-data = pickle.load(open('data.p', 'rb'))
+data = pickle.load(open('../data/data.p', 'rb'))
 
 # make mapping of chars -> index
 chars = sorted(set(list("".join([i[1] for i in data]))))
