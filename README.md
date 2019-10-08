@@ -24,5 +24,5 @@ TODO
 ## Roles
 
 Corey Sutphin - Preprocessing scripts, model utilizing Spanish word embeddings, English word embeddings, and then the two concatenated on each other.
-Cove Soyars - Preprocessing scripts, model using one-hot encoded character embeddings with a CNN.
+Cove Soyars - Preprocessing scripts, bash script, model using one-hot encoded character embeddings with a CNN.
 Nick Rodriguez - Preprocessing scripts, BiLSTM model

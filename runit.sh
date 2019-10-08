@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Author: Cove Soyars
 
 echo Running char embedding CNN...
 cd initial_CNN
