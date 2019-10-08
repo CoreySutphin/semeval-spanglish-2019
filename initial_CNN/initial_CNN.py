@@ -49,6 +49,7 @@ x_train = X[:-num_validation_samples]
 y_train = y[:-num_validation_samples]
 x_val = X[-num_validation_samples:]
 y_val = y[-num_validation_samples:]
+y_val_dense = [int(i[0]) for i in data][-num_validation_samples:]
 
 # model:
 model = Sequential()
@@ -60,13 +61,12 @@ model.add(Dense(100, activation='relu'))
 model.add(Dense(3, activation='softmax'))
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=5, verbose=2, validation_data=(x_val, y_val))
+model.fit(x_train, y_train, epochs=1, verbose=2, validation_data=(x_val, y_val))
 
 # make predictions for test set
 predictions = model.predict(x_val)
-truth = y_val
-
-report = classification_report(y_val, predictions, labels=[0, 1, 2],
+predictions = [np.argmax(i) for i in predictions]
+report = classification_report(y_val_dense, predictions,
                                target_names=['positive', 'negative', 'neutral'])
 
 print("See initial_CNN_results.txt for accuracy, precision and recall")
