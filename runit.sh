@@ -3,3 +3,8 @@
 echo Running char embedding CNN...
 cd initial_CNN
 python3 initial_CNN.py
+
+echo Running word embedding CNN...
+cd ././scripts/
+python3 word_embeddings_CNN.py
+
