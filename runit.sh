@@ -2,6 +2,7 @@
 # Author: Cove Soyars
 python -m venv semeval
 source semeval/bin/activate
+pip install -r requirements.txt
 
 echo Running char embedding CNN...
 cd initial_CNN
