@@ -24,5 +24,9 @@ python word_embeddings_CNN.py
 ```
 
 ## Running One-Hot Char Embeddings
+From root:
+'''
+cd initial_CNN
+python initial_CNN.py
 
 ## Running CharCNN + LSTM
