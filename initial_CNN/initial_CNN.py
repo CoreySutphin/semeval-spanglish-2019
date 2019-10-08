@@ -12,7 +12,7 @@ from keras.layers import Conv1D, Dense, MaxPooling1D, Flatten
 from keras.preprocessing.sequence import pad_sequences
 
 # load data from file:
-data = pickle.load(open('data.p', 'rb'))
+data = pickle.load(open('../data/data.p', 'rb'))
 
 # make mapping of chars -> index
 chars = sorted(set(list("".join([i[1] for i in data]))))

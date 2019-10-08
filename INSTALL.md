@@ -22,3 +22,7 @@ From root:
 cd scripts
 python word_embeddings_CNN.py
 ```
+
+## Running One-Hot Char Embeddings
+
+## Running CharCNN + LSTM
