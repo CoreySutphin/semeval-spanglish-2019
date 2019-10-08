@@ -5,6 +5,6 @@ cd initial_CNN
 python3 initial_CNN.py
 
 echo Running word embedding CNN...
-cd cd ../scripts
+cd ../scripts
 python3 word_embeddings_CNN.py
 
