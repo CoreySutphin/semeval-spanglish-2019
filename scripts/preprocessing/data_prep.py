@@ -13,7 +13,7 @@ import numpy as np
 import pickle
 
 ############################# READ DATA #########################################
-data_file = "scripts/preprocessing/train_spanglish.csv"
+data_file = "../scripts/preprocessing/train_spanglish.csv"
 label_to_cls = {'positive': 0, 'negative': 1, 'neutral': 2}
 
 sentences = []

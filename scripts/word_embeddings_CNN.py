@@ -1,10 +1,10 @@
 """
+@author Corey Sutphin
 Utilizing English + Spanish word embeddings with a CNN fed into two dense layers.
 
 English embeddings are GloVe 6b 300d.
 Spanish embeddings are trained on the Spanish Billion Words Corpus using word2vec.
 Tweets have been pre-processed into a pickled file.
-@author Corey Sutphin
 
 FUTURE WORK:
 1. Use contextual embeddings(BERT)
@@ -25,6 +25,7 @@ from keras.layers import Dense, Input, GlobalMaxPooling1D
 from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.initializers import Constant
 from keras.utils import to_categorical
+from keras.metrics import Precision, Recall
 
 EMBEDDING_DIM = 300
 MAX_NUM_WORDS = 20000
@@ -53,7 +54,7 @@ print('Found %s word vectors.' % len(embeddings_index))
 # Prepare our data set
 print('\nProcessing tweets')
 
-tweets = pickle.load(open('../initial_CNN/data.p', 'rb'))
+tweets = pickle.load(open('../data/data.p', 'rb'))
 
 # Vectorize the tweets into a 2D integer tensor
 tokenizer = Tokenizer(num_words=MAX_NUM_WORDS)
@@ -117,7 +118,7 @@ preds = Dense(3, activation='softmax')(x)
 model = Model(sequence_input, preds)
 model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
-              metrics=['acc'])
+              metrics=['acc', Precision(), Recall()])
 
 model.fit(x_train, y_train,
           batch_size=128,
