@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-echo Running word embedding CNN...
-python3 scripts/word_embeddings_CNN.py
+echo Running char embedding CNN...
+python3 initial_CNN/initial_CNN.py
