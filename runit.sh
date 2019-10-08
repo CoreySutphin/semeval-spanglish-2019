@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Author: Cove Soyars
+python -m venv semeval
+source semeval/bin/activate
 
 echo Running char embedding CNN...
 cd initial_CNN
