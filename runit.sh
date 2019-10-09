@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-# Author: Cove Soyars
+# Author: Cove Soyars, Corey Sutphin
 python -m venv semeval
 source semeval/bin/activate
 semeval/bin/pip install -r requirements.txt
 
-echo Running char embedding CNN...
-cd initial_CNN
-python initial_CNN.py
-
 echo Running word embedding CNN...
-cd ../scripts
+cd ./scripts
 python word_embeddings_CNN.py
 
+# Remove the created virtual environment
+cd ../
+rm -rf semeval
