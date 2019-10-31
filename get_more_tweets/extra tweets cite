@@ -1,0 +1,20 @@
+#####################################################
+#
+# CS-CORPUS-EMNLP
+#
+# Version: 0.1
+# Last update: (2015/05/30)
+# Authors: David Vilares, Miguel A. Alonso and Carlos Gómez-Rodríguez
+# -----------------------------------------
+#
+# CS-CORPUS-EMNLP is a manually-built polarity corpus for code-switching tweets (Spanish-English).
+#
+# Please, cite the following paper if you are using this resource:
+# Vilares, David and Alonso, Miguel A. and Gómez-Rodríguez, Carlos, "Sentiment Analysis on Monolingual, MultiLingual and Code-Switching Twitter Corpora", in 6th Workshop on Computational Approaches to Subjectivity, Sentiment & Social Media Analysis (WASSA 2015), Lisbon, Portugal, 2015
+#
+# License
+# -----------
+#
+# This resource is distributed under the Lesser General Public License For Linguistic Resources (LGPLLR). You will find the license at http://sanskrit.inria.fr/DATA/LGPLLR.html
+#
+#######################################################
