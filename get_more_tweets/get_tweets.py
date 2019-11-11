@@ -1,5 +1,5 @@
 import tweepy
-
+from tqdm import tqdm
 
 def read_tweet_ids(filename):
     with open(filename, 'r') as tweets:
@@ -22,18 +22,26 @@ auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
 
-tw = read_tweet_ids('spanglish_corpus.txt')[:100]
+tw = read_tweet_ids('spanglish_corpus.txt')
 
-tweet_count = 0
-for tweet in tw:
+tweet_count, new_tweets = 0, []
+
+for tweet in tqdm(tw):
     try:
-        out = api.get_status(tweet[2])
-        print(out.text.encode("utf-8"))
+        out = api.get_status(tweet[2]).text
+        new_tweets.append(out)
         tweet_count += 1
-    except:
+    except tweepy.error.TweepError:
         pass
 
-print(tweet_count)
+
+print("tweet count:",tweet_count)
+with open('%d_more_tweets.txt' % tweet_count, 'w') as tweets_out:
+    for t in new_tweets:
+        tweets_out.write(str(t) + "\n")
+
+
+
 
 
 
