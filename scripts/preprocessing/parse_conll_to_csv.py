@@ -25,6 +25,7 @@ remove_users = True if sys.argv[2].lower() == "y" else False
 remove_lang = True if sys.argv[3].lower() == "y" else False
 remove_stop_words = True if sys.argv[4].lower() == 'y' else False
 convert_emojis = True if sys.argv[5].lower() == 'y' else False
+remove_links = True if sys.argv[6].lower() == 'y' else False
 
 if remove_stop_words:
     with open('spanish-stopwords.txt') as spanish_file:
@@ -34,6 +35,7 @@ if remove_stop_words:
 
 label_counts = {}
 tweets = []
+langs = {}
 
 with open(conll_file, 'r') as file:
     sentences = re.split('\n\n', file.read())
@@ -55,26 +57,44 @@ with open(conll_file, 'r') as file:
         # Create a list of objects representing the tokens
         for token in lines[1:]:
             word, language = token.split('\t')
-            if remove_stop_words:
-                if word in stopwords_en or word in stopwords_es:
+
+            if remove_links:
+                if word.startswith('http'):
                     continue
 
             if convert_emojis:
                 word = emoji.demojize(word)
+                # If single emoji, will return [emoji]
+                emojis_split = word.replace("::", ": :").lower().split(" ")
+                if len(emojis_split) > 1:
+                    tweet += emojis_split
+                    for _emoji in emojis_split:
+                        if _emoji not in langs:
+                            langs[_emoji] = language
+                    continue
+
+            word = word.lower()  # Lowercase
+            word = re.sub(r'\d+', '0', word)  # Change all numbers to zero
+
+            if remove_stop_words:
+                if word in stopwords_en or word in stopwords_es:
+                    continues
 
             if word.startswith('@'):
                 if remove_users:
                     word = "@"
 
+            if word not in langs:
+                langs[word] = language
+
             if remove_lang:
                 tweet.append(word)
-            else:
-                tweet.append((word,language))
 
         tweets.append(tweet)
 
 print(label_counts)
 tweets_df = pd.DataFrame(tweets)
-
+langs_df = pd.DataFrame(langs.items())
 
 tweets_df.to_csv('train_spanglish.csv', index=False, header=False)
+langs_df.to_csv('langs.csv', index=False, header=False)
