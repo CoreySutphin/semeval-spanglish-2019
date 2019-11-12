@@ -22,7 +22,7 @@ auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
 
-tw = read_tweet_ids('spanglish_corpus.txt')
+tw = read_tweet_ids('../data/cs-corpus-emnlp-tweets.txt')
 
 tweet_count, new_tweets = 0, []
 
