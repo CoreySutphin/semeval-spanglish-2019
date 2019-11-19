@@ -77,8 +77,14 @@ with open(conll_file, 'r') as file:
             word = re.sub(r'\d+', '0', word)  # Change all numbers to zero
 
             if remove_stop_words:
-                if word in stopwords_en or word in stopwords_es:
-                    continues
+                # Identified as an English stop-word
+                if language == 'lang1' and word in stopwords_en:
+                    continue
+                # Identified as an English stop-word
+                elif language == 'lang2' and word in stopwords_es:
+                    continue
+                elif word in stopwords_en or word in stopwords_es:
+                    continue
 
             if word.startswith('@'):
                 if remove_users:

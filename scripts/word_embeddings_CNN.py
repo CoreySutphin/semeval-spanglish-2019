@@ -26,6 +26,7 @@ from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.initializers import Constant
 from keras.utils import to_categorical
 from keras.metrics import Precision, Recall
+from sklearn.model_selection import StratifiedKFold
 
 EMBEDDING_DIM = 300
 MAX_NUM_WORDS = 20000
@@ -67,21 +68,22 @@ print('Found %s unique tokens.' % len(word_index))
 
 max_length = len(max(tweets, key=len))  # Get length of longest tweet
 data = pad_sequences(sequences, maxlen=max_length)
-labels = to_categorical(np.asarray(labels), num_classes=3)
+# labels = to_categorical(np.asarray(labels), num_classes=3)
+labels = np.asarray(labels)
 print('Shape of data tensor:', data.shape)
 print('Shape of label tensor:', labels.shape)
 
 # Split the data into a training set and a validation set
-indices = np.arange(data.shape[0])
-np.random.shuffle(indices)
-data = data[indices]
-labels = labels[indices]
-num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
-
-x_train = data[:-num_validation_samples]
-y_train = labels[:-num_validation_samples]
-x_val = data[-num_validation_samples:]
-y_val = labels[-num_validation_samples:]
+# indices = np.arange(data.shape[0])
+# np.random.shuffle(indices)
+# data = data[indices]
+# labels = labels[indices]
+# num_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
+#
+# x_train = data[:-num_validation_samples]
+# y_train = labels[:-num_validation_samples]
+# x_val = data[-num_validation_samples:]
+# y_val = labels[-num_validation_samples:]
 
 print('Preparing embedding matrix.')
 num_words = len(word_index) + 1
@@ -101,26 +103,44 @@ embedding_layer = Embedding(num_words,
                             input_length=max_length,
                             trainable=False)
 
-print('Training model.')
 
 # Train a 1D convnet with global maxpooling
-sequence_input = Input(shape=(max_length,), dtype='int32')
-embedded_sequences = embedding_layer(sequence_input)
-x = Conv1D(filters=128, kernel_size=3, input_shape=(max_length, len(word_index) + 1), data_format='channels_first')(embedded_sequences)
-x = MaxPooling1D()(x)
-x = Conv1D(filters=128, kernel_size=3, input_shape=(max_length, len(word_index) + 1), data_format='channels_first')(x)
-x = MaxPooling1D()(x)
-x = Conv1D(filters=128, kernel_size=3, input_shape=(max_length, len(word_index) + 1), data_format='channels_first')(x)
-x = GlobalMaxPooling1D()(x)
-x = Dense(128, activation='relu')(x)
-preds = Dense(3, activation='softmax')(x)
+def create_model():
+    sequence_input = Input(shape=(max_length,), dtype='int32')
+    embedded_sequences = embedding_layer(sequence_input)
+    x = Conv1D(filters=128, kernel_size=3, input_shape=(max_length, len(word_index) + 1), data_format='channels_first')(embedded_sequences)
+    x = MaxPooling1D()(x)
+    x = Conv1D(filters=128, kernel_size=3, input_shape=(max_length, len(word_index) + 1), data_format='channels_first')(x)
+    x = MaxPooling1D()(x)
+    x = Conv1D(filters=128, kernel_size=3, input_shape=(max_length, len(word_index) + 1), data_format='channels_first')(x)
+    x = GlobalMaxPooling1D()(x)
+    x = Dense(128, activation='relu')(x)
+    preds = Dense(3, activation='softmax')(x)
 
-model = Model(sequence_input, preds)
-model.compile(loss='categorical_crossentropy',
-              optimizer='rmsprop',
-              metrics=['acc', Precision(), Recall()])
+    model = Model(sequence_input, preds)
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='rmsprop',
+                  metrics=['acc', Precision(), Recall()])
+    return model
 
-model.fit(x_train, y_train,
-          batch_size=128,
-          epochs=10,
-          validation_data=(x_val, y_val))
+
+def train_model(model, x_train, y_train, x_test, y_test):
+    model.fit(x_train, y_train,
+              batch_size=128,
+              epochs=10,
+              validation_data=(x_test, y_test))
+
+
+# Perform 5-fold cross validation
+n_splits = 5
+skf = StratifiedKFold(n_splits=n_splits, shuffle=False)
+for train, test in skf.split(data, labels):
+    print("Running Fold", i+1, "/", n_splits)
+    model = None  # Clearing the NN.
+    model = create_model()
+    x_train = data[train]
+    y_train = to_categorical(np.asarray(labels[train]), num_classes=3)
+    x_test = data[test]
+    y_test = to_categorical(np.asarray(labels[test]), num_classes=3)
+
+    train_model(model, x_train, y_train, x_test, y_test)
