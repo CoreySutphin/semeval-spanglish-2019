@@ -2,10 +2,10 @@ from keras.models import Model, Input
 from keras.layers import TimeDistributed, LSTM
 from keras.layers import Embedding, Bidirectional, Dense, Add, concatenate, Flatten
 from keras.initializers import Constant
+from keras.metrics import Precision, Recall
 
 
-
-def model(x_train, y_train, embed_matrix, params=None, fit_model=True):
+def model(x_train, y_train, X_test, y_test, embed_matrix, params=None, fit_model=True):
     ''' params is a dictionary containing hyperparameter values. See main.py
     for current definition.
     '''
@@ -45,12 +45,12 @@ def model(x_train, y_train, embed_matrix, params=None, fit_model=True):
     model = Model([word_in, char_in], out)
     print(model.summary())
     model.compile(loss='categorical_crossentropy', optimizer='adam',
-                  metrics=['accuracy'])
+                  metrics=['accuracy', Precision(), Recall()])
 
     if fit_model:
         history = model.fit(x_train, y_train,
                           batch_size=params['batch_size'], epochs=params['epochs'],
-                          validation_split=0.1,
+                          validation_data=(X_test, y_test),
                           verbose=2)
         return history, model
     else:

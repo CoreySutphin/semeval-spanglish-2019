@@ -14,6 +14,7 @@ from keras.utils import to_categorical
 from model import model
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
+from sklearn.model_selection import StratifiedKFold
 
 
 def main():
@@ -59,7 +60,7 @@ def main():
         if embedding_vector is not None:
             # Words not found in embedding index will be all-zeros.
             embedding_matrix[i] = embedding_vector
-    X_word = pad_sequences(sequences, maxlen=max_len, padding='post')
+    X_word = np.array(pad_sequences(sequences, maxlen=max_len, padding='post'))
 
     # character embeddings:
     word_to_lang = pd.read_csv('../../data/langs.csv', header=None,
@@ -75,10 +76,6 @@ def main():
     char2idx = {c: i + 2 for i, c in enumerate(chars)}
     char2idx["UNK"] = 1
     char2idx["PAD"] = 0
-    # Plot density of word lengths
-    pd.DataFrame([len(str(x)) for x in words]).plot.density()
-
-
 
     ''' Creates a list of arrays. Each array represents
     one sentence where each row is a word, each column each is a character in that word.
@@ -108,27 +105,38 @@ def main():
     label_one_hot = to_categorical(label_ints)
 
     # Split Data
-    char_train, char_test, label_train, label_test = train_test_split(X_char, label_one_hot, test_size=.1, random_state=0)
-    word_train, word_test, _, _ = train_test_split(X_word, label_one_hot, test_size=.1, random_state=0)
+
 
     ### Parameter Tune
     iterations = 10
     p = {
-        'max_num_words': [max_len]*iterations,
-        'max_chars_in_word': [max_len_char]*iterations,
-        'num_of_unique_chars': [n_chars]*iterations,
-        'lstm_units_char_emb': np.random.randint(10, 50, iterations),
-        'dropout_rate_char_emb': [10**np.random.uniform(-0.3, -2) for x in range(iterations)],
-        'bilstm_units': np.random.randint(5, 100, iterations),
-        'bilstm_dropout_rate': [10**np.random.uniform(-0.3, -2) for x in range(iterations)],
-        'epochs': np.random.randint(10, 30, iterations),
-        'batch_size': np.random.randint(10, 20, iterations),
-        'vocab_size': [num_words]*iterations
+        'max_num_words': max_len,
+        'max_chars_in_word': max_len_char,
+        'num_of_unique_chars': n_chars,
+        'lstm_units_char_emb': 50,
+        'dropout_rate_char_emb': 0.5,
+        'bilstm_units': 100,
+        'bilstm_dropout_rate': 0.5,
+        'epochs': 10,
+        'batch_size': 32,
+        'vocab_size': num_words
     }
 
-    assert all([len(p_i) == iterations for p_i in p.values()])
-    p_i = {key: p[key][0] for key in p}
-    for _ in p_i.items(): print(_)
-    model([word_train, char_train], label_train, embedding_matrix, params=p_i, fit_model=True)
+    for _ in p.items(): print(_)
+
+    n_splits = 5
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=False)
+    for train, test in skf.split(data, np.asarray(label_ints)):
+
+       y_train = label_one_hot[train]
+
+       y_test = label_one_hot[test]
+
+       X_tr_words = X_word[train]
+       X_te_words = X_word[test]
+       X_tr_chars = X_char[train]
+       X_te_chars = X_char[test]
+
+       model([X_tr_words, X_tr_chars], y_train, [X_te_words, X_te_chars], y_test,embedding_matrix, params=p, fit_model=True)
 
 main()
