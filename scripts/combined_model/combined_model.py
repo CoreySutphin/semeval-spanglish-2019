@@ -104,11 +104,6 @@ def main():
     label_ints = label_encoder.fit_transform(raw_labels)
     label_one_hot = to_categorical(label_ints)
 
-    # Split Data
-
-
-    ### Parameter Tune
-    iterations = 10
     p = {
         'max_num_words': max_len,
         'max_chars_in_word': max_len_char,
@@ -125,9 +120,10 @@ def main():
     for _ in p.items(): print(_)
 
     n_splits = 5
+    current_fold = 1
     skf = StratifiedKFold(n_splits=n_splits, shuffle=False)
     for train, test in skf.split(data, np.asarray(label_ints)):
-
+       print('==============================================  Fold %d  ===================================' % current_fold)
        y_train = label_one_hot[train]
 
        y_test = label_one_hot[test]
@@ -136,6 +132,7 @@ def main():
        X_te_words = X_word[test]
        X_tr_chars = X_char[train]
        X_te_chars = X_char[test]
+       current_fold += 1
 
        model([X_tr_words, X_tr_chars], y_train, [X_te_words, X_te_chars], y_test,embedding_matrix, params=p, fit_model=True)
 
