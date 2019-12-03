@@ -8,6 +8,12 @@ echo Running word embedding CNN...
 cd ./scripts
 python word_embeddings_CNN.py
 
+echo Running character LSTM + BiLSTM...
+cd char_model
+python char_model.py
+
+
+
 # Remove the created virtual environment
 cd ../
 rm -rf semeval
